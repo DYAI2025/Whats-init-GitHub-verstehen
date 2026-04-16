@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #020617;
+  --surface: #0f172a;
+  --border: #1e293b;
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --accent: #3b82f6;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: #3b82f620; color: #93c5fd; }
+
+.prose-dark p { color: #94a3b8; line-height: 1.75; margin-bottom: 1rem; }
+.prose-dark h2 { color: #e2e8f0; font-size: 1.25rem; font-weight: 600; margin: 1.5rem 0 0.75rem; }
+.prose-dark h3 { color: #cbd5e1; font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
+.prose-dark ul { color: #94a3b8; padding-left: 1.25rem; margin-bottom: 1rem; }
+.prose-dark li { margin-bottom: 0.4rem; }
+.prose-dark code { background: #1e293b; color: #7dd3fc; padding: 2px 6px; border-radius: 4px; font-size: 0.85em; font-family: 'SF Mono', 'Fira Code', monospace; }
+.prose-dark pre { background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 1rem; overflow-x: auto; margin: 1rem 0; }
+.prose-dark pre code { background: transparent; padding: 0; color: #7dd3fc; font-size: 0.88rem; }
