@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { analyzeRepo, fetchGitHubMeta } from "@/lib/analyze";
 import AnalysisCard from "@/components/AnalysisCard";
@@ -43,7 +44,7 @@ export default async function AnalysePage({ params }: PageProps) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-slate-600 mb-8">
-        <a href="/" className="hover:text-slate-400 transition-colors">What&apos;s in it?</a>
+        <Link href="/" className="hover:text-slate-400 transition-colors">What&apos;s in it?</Link>
         <span>/</span>
         <a
           href={`https://github.com/${owner}`}

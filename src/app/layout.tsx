@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -18,13 +19,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen bg-slate-950 text-slate-200 antialiased">
         <nav className="border-b border-slate-800/60 backdrop-blur-sm sticky top-0 z-50 bg-slate-950/80">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
-            <a href="/" className="flex items-center gap-2 font-semibold text-slate-100 hover:text-white transition-colors">
+            <Link href="/" className="flex items-center gap-2 font-semibold text-slate-100 hover:text-white transition-colors">
               <span className="text-blue-400 text-lg">⬡</span>
               <span>What&apos;s in it?</span>
-            </a>
+            </Link>
             <div className="flex items-center gap-6 text-sm text-slate-400">
-              <a href="/lernen" className="hover:text-slate-200 transition-colors">Academy</a>
-              <a href="/wiki/mcp" className="hover:text-slate-200 transition-colors">Lexikon</a>
+              <Link href="/lernen" className="hover:text-slate-200 transition-colors">Academy</Link>
+              <Link href="/wiki/mcp" className="hover:text-slate-200 transition-colors">Lexikon</Link>
             </div>
           </div>
         </nav>
