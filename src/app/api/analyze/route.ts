@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { analyzeRepo } from "@/lib/analyze";
+import { analyzeRepo, isValidGitHubIdentifier } from "@/lib/analyze";
 
 export async function POST(req: NextRequest) {
   try {
     const { owner, repo } = await req.json();
     if (!owner || !repo) {
       return NextResponse.json({ error: "owner and repo required" }, { status: 400 });
+    }
+    if (!isValidGitHubIdentifier(owner) || !isValidGitHubIdentifier(repo)) {
+      return NextResponse.json({ error: "invalid owner or repo format" }, { status: 400 });
     }
 
     const analysis = await analyzeRepo(owner, repo);
@@ -21,6 +24,9 @@ export async function POST(req: NextRequest) {
     }
     if (message.includes("GitHub API error: 403")) {
       return NextResponse.json({ error: "GitHub rate limit exceeded" }, { status: 429 });
+    }
+    if (message.includes("Invalid owner or repo format")) {
+      return NextResponse.json({ error: "invalid owner or repo format" }, { status: 400 });
     }
 
     return NextResponse.json({ error: message }, { status: 500 });

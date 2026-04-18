@@ -12,7 +12,6 @@ const TOC_ITEMS = [
 ];
 
 export default function Sidebar() {
-  const [active, setActive] = useState<string>("overview");
   const [visibleIds, setVisibleIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -41,20 +40,7 @@ export default function Sidebar() {
     return () => observers.forEach((o) => o.disconnect());
   }, []);
 
-  // Pick the topmost visible section
-  useEffect(() => {
-    const ordered = TOC_ITEMS.map((i) => i.id).filter((id) => visibleIds.has(id));
-    if (ordered[0]) setActive(ordered[0]);
-  }, [visibleIds]);
-
-  // Only show items that exist in the DOM
-  const [existingIds, setExistingIds] = useState<Set<string>>(new Set());
-  useEffect(() => {
-    const present = new Set(
-      TOC_ITEMS.map((i) => i.id).filter((id) => !!document.getElementById(id))
-    );
-    setExistingIds(present);
-  }, []);
+  const active = TOC_ITEMS.find((item) => visibleIds.has(item.id))?.id ?? "overview";
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
@@ -62,8 +48,6 @@ export default function Sidebar() {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
-
-  const visibleToc = TOC_ITEMS.filter((i) => existingIds.has(i.id));
 
   return (
     <aside className="space-y-6">
@@ -73,7 +57,7 @@ export default function Sidebar() {
           Inhalt
         </p>
         <nav className="space-y-1">
-          {visibleToc.map((item) => (
+          {TOC_ITEMS.map((item) => (
             <button
               key={item.id}
               onClick={() => scrollTo(item.id)}

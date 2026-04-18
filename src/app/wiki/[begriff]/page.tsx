@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface PageProps {
@@ -139,9 +140,9 @@ export default async function WikiPage({ params }: PageProps) {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-slate-600 mb-8">
-        <a href="/" className="hover:text-slate-400 transition-colors">What&apos;s in it?</a>
+        <Link href="/" className="hover:text-slate-400 transition-colors">What&apos;s in it?</Link>
         <span>/</span>
-        <a href="/wiki/mcp" className="hover:text-slate-400 transition-colors">Lexikon</a>
+        <Link href="/wiki/mcp" className="hover:text-slate-400 transition-colors">Lexikon</Link>
         <span>/</span>
         <span className="text-slate-400">{slug}</span>
       </nav>
@@ -168,7 +169,7 @@ export default async function WikiPage({ params }: PageProps) {
           <p className="text-xs text-slate-600 uppercase tracking-wide mb-3">Verwandte Begriffe</p>
           <div className="flex flex-wrap gap-2">
             {entry.related.map((rel) => (
-              <a
+              <Link
                 key={rel}
                 href={`/wiki/${encodeURIComponent(rel)}`}
                 className="inline-flex items-center px-3 py-1 rounded-full text-sm
@@ -177,7 +178,7 @@ export default async function WikiPage({ params }: PageProps) {
                   transition-all"
               >
                 {rel}
-              </a>
+              </Link>
             ))}
           </div>
         </section>
@@ -186,12 +187,12 @@ export default async function WikiPage({ params }: PageProps) {
       {/* Back CTA */}
       <div className="mt-12 p-6 rounded-xl bg-slate-800/30 border border-slate-700/60 text-center">
         <p className="text-sm text-slate-400 mb-4">Analysiere ein Repository direkt</p>
-        <a
+        <Link
           href="/"
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors"
         >
           Repository analysieren →
-        </a>
+        </Link>
       </div>
     </div>
   );

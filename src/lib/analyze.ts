@@ -41,6 +41,80 @@ Gib STRIKT dieses JSON ohne Markdown-Wrapper zurück:
   "keywordsForInternalLinking": ["string (3-6 relevante Begriffe für /wiki/)"]
 }`;
 
+const GITHUB_IDENTIFIER_RE = /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$/;
+
+export function isValidGitHubIdentifier(value: string): boolean {
+  return GITHUB_IDENTIFIER_RE.test(value);
+}
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+export function parseAnalysisResult(rawText: string): AnalysisResult {
+  let parsed: unknown;
+
+  try {
+    parsed = JSON.parse(rawText);
+  } catch {
+    const jsonMatch = rawText.match(/\{[\s\S]+\}/);
+    if (!jsonMatch) throw new Error("LLM returned invalid JSON");
+    parsed = JSON.parse(jsonMatch[0]);
+  }
+
+  if (!isObject(parsed)) {
+    throw new Error("LLM returned invalid analysis payload");
+  }
+
+  const installation = parsed.installation;
+  const aiPrompts = parsed.aiPrompts;
+  const keywords = parsed.keywordsForInternalLinking;
+
+  if (
+    typeof parsed.repoName !== "string" ||
+    typeof parsed.starsInterpretation !== "string" ||
+    typeof parsed.category !== "string" ||
+    typeof parsed.coreBenefit !== "string" ||
+    (parsed.smartRecommendation !== null && typeof parsed.smartRecommendation !== "string") ||
+    !isObject(installation) ||
+    (installation.local !== null && typeof installation.local !== "string") ||
+    (installation.global !== null && typeof installation.global !== "string") ||
+    typeof installation.clone !== "string" ||
+    !Array.isArray(aiPrompts) ||
+    aiPrompts.length === 0 ||
+    aiPrompts.some(
+      (item) =>
+        !isObject(item) ||
+        typeof item.intent !== "string" ||
+        typeof item.prompt !== "string"
+    ) ||
+    typeof parsed.seoDeepDiveHtml !== "string" ||
+    !Array.isArray(keywords) ||
+    keywords.some((item) => typeof item !== "string")
+  ) {
+    throw new Error("LLM returned malformed analysis");
+  }
+
+  return {
+    repoName: parsed.repoName,
+    starsInterpretation: parsed.starsInterpretation,
+    category: parsed.category,
+    coreBenefit: parsed.coreBenefit,
+    smartRecommendation: parsed.smartRecommendation,
+    installation: {
+      local: installation.local,
+      global: installation.global,
+      clone: installation.clone,
+    },
+    aiPrompts: aiPrompts.map((item) => ({
+      intent: item.intent,
+      prompt: item.prompt,
+    })),
+    seoDeepDiveHtml: parsed.seoDeepDiveHtml,
+    keywordsForInternalLinking: keywords,
+  };
+}
+
 async function fetchGitHubData(owner: string, repo: string): Promise<GitHubRepo> {
   const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
     headers: { Accept: "application/vnd.github+json" },
@@ -66,6 +140,10 @@ async function fetchReadme(owner: string, repo: string): Promise<string> {
 }
 
 export async function analyzeRepo(owner: string, repo: string): Promise<AnalysisResult> {
+  if (!isValidGitHubIdentifier(owner) || !isValidGitHubIdentifier(repo)) {
+    throw new Error("Invalid owner or repo format");
+  }
+
   const cacheKey = `${owner}/${repo}`;
 
   // Cache hit — costs 0 tokens
@@ -114,14 +192,7 @@ ${readme || "kein README gefunden"}`;
   const llmData = await llmRes.json();
   const rawText = llmData.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-  let analysis: AnalysisResult;
-  try {
-    analysis = JSON.parse(rawText);
-  } catch {
-    const jsonMatch = rawText.match(/\{[\s\S]+\}/);
-    if (!jsonMatch) throw new Error("LLM returned invalid JSON");
-    analysis = JSON.parse(jsonMatch[0]);
-  }
+  const analysis = parseAnalysisResult(rawText);
 
   cache.set(cacheKey, { data: analysis, ts: Date.now() });
   return analysis;
