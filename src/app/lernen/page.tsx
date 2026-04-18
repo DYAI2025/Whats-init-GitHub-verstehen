@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Academy — Git & Open Source verstehen",
@@ -104,7 +105,7 @@ export default function LernenPage() {
       {/* Topic Grid */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {TOPICS.map((topic) => (
-          <a
+          <Link
             key={topic.slug}
             href={`/lernen/${topic.slug}`}
             className="group flex flex-col p-5 rounded-xl border border-slate-700/60 bg-slate-800/20
@@ -130,7 +131,7 @@ export default function LernenPage() {
               </svg>
               {topic.readTime} Lesezeit
             </div>
-          </a>
+          </Link>
         ))}
       </div>
 
@@ -143,14 +144,14 @@ export default function LernenPage() {
             MCP, npm, Agents, Forks — alle wichtigen Konzepte kurz erklärt.
           </p>
         </div>
-        <a
+        <Link
           href="/wiki/mcp"
           className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-lg
             border border-blue-500/40 text-blue-400 hover:bg-blue-500/10
             text-sm font-medium transition-colors"
         >
           Zum Lexikon →
-        </a>
+        </Link>
       </div>
     </div>
   );
