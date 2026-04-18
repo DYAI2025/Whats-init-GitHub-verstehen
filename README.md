@@ -79,7 +79,7 @@ flowchart LR
   K --> L[Ergebnis-UI mit Nutzen, Kategorie, Install, Prompts]
   H --> L
 
-  M[POST /api/analyze] --> I
+  M[POST /api/analyze] --> G
 ```
 
 ### Kurz erklärt
