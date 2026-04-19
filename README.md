@@ -97,6 +97,13 @@ Weniger Suchzeit. Mehr Umsetzungszeit.
 
 ---
 
+
+## Suche & Auffindbarkeit
+
+Eine konkrete Bewertung zur semantischen Suche (inkl. Embedding-Abwägung und Hybrid-Roadmap) findest du hier:
+
+- [`docs/search-strategy.md`](docs/search-strategy.md)
+
 ## Deployment auf Railway
 
 1. Repository zu Railway verbinden ("Deploy from GitHub").
