@@ -119,3 +119,56 @@ Weniger Suchzeit. Mehr Umsetzungszeit.
 - Aufwand: nur wenige Zeilen Header-Logik.
 - Impact: deutlich weniger `403`/Rate-Limit-Fehler bei steigender Nutzung.
 - Kein Breaking Change: lokal funktioniert es weiter auch ohne Token.
+
+---
+
+## Troubleshooting: `git pull`/`git push` Konflikt (non-fast-forward)
+
+Wenn du eine Ausgabe wie im Screenshot siehst (`Merge-Konflikt`, `Konnte ... nicht anwenden`, danach `push rejected (non-fast-forward)`), dann war ein Rebase/Merge lokal nicht sauber abgeschlossen **und** der Remote-Branch war weiter als dein lokaler Stand.
+
+### Schneller Fix (sicherer Ablauf)
+
+1. Abgebrochenen Rebase aufräumen:
+```bash
+git rebase --abort
+```
+
+2. Sicherstellen, dass du auf `main` bist:
+```bash
+git checkout main
+```
+
+3. Neuesten Stand holen:
+```bash
+git fetch origin
+```
+
+4. Remote-Stand strikt übernehmen (nur wenn `main` keine lokalen Commits behalten muss):
+```bash
+git reset --hard origin/main
+```
+
+5. Danach normal weiterarbeiten:
+```bash
+git checkout -b <neuer-branch>
+# Änderungen machen
+git add .
+git commit -m "..."
+git push -u origin <neuer-branch>
+```
+
+### Falls du **lokale Commits behalten** willst
+
+Statt `reset --hard`:
+```bash
+git pull --rebase origin main
+# Konflikte lösen
+git add <dateien>
+git rebase --continue
+```
+
+Bei erneutem Konflikt in `next.config.ts` oder `src/app/layout.tsx`:
+- Konfliktmarker (`<<<<<<<`, `=======`, `>>>>>>>`) entfernen,
+- gewünschte Kombination beider Änderungen übernehmen,
+- Datei speichern und mit `git add` markieren,
+- mit `git rebase --continue` fortsetzen.
