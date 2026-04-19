@@ -29,4 +29,5 @@ export interface GitHubRepo {
   homepage: string | null;
   license: { name: string } | null;
   updated_at: string;
+  owner: { login: string; avatar_url: string };
 }

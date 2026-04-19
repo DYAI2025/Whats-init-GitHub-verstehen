@@ -1,6 +1,17 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
+  --bg: #ffffff;
+  --surface: #f8fafc;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --muted: #64748b;
+  --accent: #3b82f6;
+}
+
+.dark {
   --bg: #020617;
   --surface: #0f172a;
   --border: #1e293b;
@@ -18,13 +29,85 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-::selection { background: #3b82f620; color: #93c5fd; }
+::selection { background: #3b82f620; color: #1e40af; }
+.dark ::selection { color: #93c5fd; }
 
-.prose-dark p { color: #94a3b8; line-height: 1.75; margin-bottom: 1rem; }
-.prose-dark h2 { color: #e2e8f0; font-size: 1.25rem; font-weight: 600; margin: 1.5rem 0 0.75rem; }
-.prose-dark h3 { color: #cbd5e1; font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
-.prose-dark ul { color: #94a3b8; padding-left: 1.25rem; margin-bottom: 1rem; }
+/* ──────────────────────────────────────────────────────
+   LIGHT MODE OVERRIDES
+   The components use hardcoded dark-theme Tailwind classes.
+   These rules translate them into equivalent light-theme colors.
+   ────────────────────────────────────────────────────── */
+
+html.light body { background: #ffffff; color: #0f172a; }
+
+/* Text colors */
+html.light .text-white,
+html.light .text-slate-100,
+html.light .text-slate-200 { color: #0f172a; }
+html.light .text-slate-300 { color: #1e293b; }
+html.light .text-slate-400 { color: #334155; }
+html.light .text-slate-500 { color: #475569; }
+html.light .text-slate-600 { color: #64748b; }
+html.light .text-slate-700 { color: #94a3b8; }
+html.light .placeholder-slate-500::placeholder { color: #94a3b8; }
+
+/* Backgrounds */
+html.light .bg-slate-950,
+html.light .bg-slate-950\/80 { background-color: #ffffff; }
+html.light .bg-slate-900,
+html.light .bg-slate-900\/40,
+html.light .bg-slate-900\/60 { background-color: #f8fafc; }
+html.light .bg-slate-800,
+html.light .bg-slate-800\/20,
+html.light .bg-slate-800\/30,
+html.light .bg-slate-800\/40,
+html.light .bg-slate-800\/50,
+html.light .bg-slate-800\/60 { background-color: #f1f5f9; }
+html.light .bg-slate-700\/40,
+html.light .bg-slate-700\/50,
+html.light .bg-slate-700\/60 { background-color: #e2e8f0; }
+
+/* Borders */
+html.light .border-slate-600,
+html.light .border-slate-600\/50 { border-color: #cbd5e1; }
+html.light .border-slate-700,
+html.light .border-slate-700\/40,
+html.light .border-slate-700\/60 { border-color: #e2e8f0; }
+html.light .border-slate-800,
+html.light .border-slate-800\/60 { border-color: #e2e8f0; }
+
+/* Hover states */
+html.light .hover\:text-white:hover,
+html.light .hover\:text-slate-100:hover,
+html.light .hover\:text-slate-200:hover,
+html.light .hover\:text-slate-300:hover { color: #020617; }
+html.light .hover\:bg-slate-700:hover,
+html.light .hover\:bg-slate-700\/40:hover,
+html.light .hover\:bg-slate-700\/60:hover,
+html.light .hover\:bg-slate-800\/50:hover { background-color: #e2e8f0; }
+html.light .hover\:border-slate-600:hover,
+html.light .hover\:border-slate-600\/60:hover,
+html.light .hover\:border-slate-700\/60:hover { border-color: #94a3b8; }
+
+/* Nav-Bar backdrop */
+html.light nav.bg-slate-950\/80 { background-color: rgba(255, 255, 255, 0.85); }
+
+/* Code boxes — keep code readable */
+html.light pre { color: #0369a1 !important; }
+html.light pre code { color: #0369a1 !important; }
+
+/* Prose (Deep Dive / Wiki content) */
+.prose-dark p { color: var(--muted); line-height: 1.75; margin-bottom: 1rem; }
+.prose-dark h2 { color: var(--text); font-size: 1.25rem; font-weight: 600; margin: 1.5rem 0 0.75rem; }
+.prose-dark h3 { color: var(--text); font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
+.prose-dark ul { color: var(--muted); padding-left: 1.25rem; margin-bottom: 1rem; }
 .prose-dark li { margin-bottom: 0.4rem; }
-.prose-dark code { background: #1e293b; color: #7dd3fc; padding: 2px 6px; border-radius: 4px; font-size: 0.85em; font-family: 'SF Mono', 'Fira Code', monospace; }
-.prose-dark pre { background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 1rem; overflow-x: auto; margin: 1rem 0; }
-.prose-dark pre code { background: transparent; padding: 0; color: #7dd3fc; font-size: 0.88rem; }
+.prose-dark code { background: var(--surface); color: #0369a1; padding: 2px 6px; border-radius: 4px; font-size: 0.85em; font-family: 'SF Mono', 'Fira Code', monospace; }
+.prose-dark pre { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; overflow-x: auto; margin: 1rem 0; }
+.prose-dark pre code { background: transparent; padding: 0; color: #0369a1; font-size: 0.88rem; }
+.dark .prose-dark p { color: #94a3b8; }
+.dark .prose-dark h2 { color: #e2e8f0; }
+.dark .prose-dark h3 { color: #cbd5e1; }
+.dark .prose-dark ul { color: #94a3b8; }
+.dark .prose-dark code { color: #7dd3fc; }
+.dark .prose-dark pre code { color: #7dd3fc; }

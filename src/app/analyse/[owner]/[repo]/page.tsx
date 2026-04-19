@@ -67,6 +67,7 @@ export default async function AnalysePage({ params }: PageProps) {
             owner={owner}
             repo={repo}
             stars={ghData.stargazers_count}
+            avatarUrl={ghData.owner.avatar_url}
           />
         </div>
 

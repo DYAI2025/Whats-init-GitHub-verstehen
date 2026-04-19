@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { AnalysisResult } from "@/types/analysis";
 import CopyButton from "./CopyButton";
 
@@ -45,9 +46,29 @@ interface AnalysisCardProps {
   owner: string;
   repo: string;
   stars: number;
+  avatarUrl: string;
 }
 
-export default function AnalysisCard({ data, owner, repo, stars }: AnalysisCardProps) {
+function ClaudeCommandBox({ label, prompt }: { label: string; prompt: string }) {
+  return (
+    <div className="rounded-lg border border-violet-500/30 bg-violet-500/5 overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-2 bg-violet-500/10 border-b border-violet-500/20">
+        <div className="flex items-center gap-2">
+          <svg className="w-3.5 h-3.5 text-violet-400" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="1.5" fill="none" />
+          </svg>
+          <span className="text-xs font-medium text-violet-300">{label}</span>
+        </div>
+        <CopyButton text={prompt} />
+      </div>
+      <pre className="px-4 py-3 text-sm text-violet-200 font-mono whitespace-pre-wrap bg-violet-950/20">
+        <code>{prompt}</code>
+      </pre>
+    </div>
+  );
+}
+
+export default function AnalysisCard({ data, owner, repo, stars, avatarUrl }: AnalysisCardProps) {
   const categoryClass = CATEGORY_COLORS[data.category] ?? "bg-slate-500/15 text-slate-400 border-slate-500/30";
 
   return (
@@ -67,9 +88,19 @@ export default function AnalysisCard({ data, owner, repo, stars }: AnalysisCardP
           </span>
         </div>
 
-        <h1 className="text-3xl font-bold text-slate-100 mb-3">
-          {data.repoName}
-        </h1>
+        <div className="flex items-center gap-4 mb-3">
+          <Image
+            src={avatarUrl}
+            alt={`${owner} Logo`}
+            width={56}
+            height={56}
+            className="rounded-xl border border-slate-700/60 shrink-0"
+            unoptimized
+          />
+          <h1 className="text-3xl font-bold text-slate-100">
+            {data.repoName}
+          </h1>
+        </div>
         <p className="text-lg text-slate-300 leading-relaxed">{data.coreBenefit}</p>
 
         <a
@@ -104,27 +135,46 @@ export default function AnalysisCard({ data, owner, repo, stars }: AnalysisCardP
 
       {/* ── Installation ── */}
       <section id="installation">
-        <h2 className="text-xl font-semibold text-slate-100 mb-4">Installation</h2>
-        <div className="space-y-3">
+        <h2 className="text-xl font-semibold text-slate-100 mb-1">Installation</h2>
+        <p className="text-sm text-slate-500 mb-4">Claude-Befehl zum direkten Einsetzen oder Terminal-Befehl</p>
+        <div className="space-y-6">
           {data.installation.local && (
-            <CodeBox
-              label="Lokal"
-              command={data.installation.local}
-              sublabel="nur für dieses Projekt"
-            />
+            <div className="space-y-2">
+              <ClaudeCommandBox
+                label="Claude-Befehl"
+                prompt={`Installiere ${data.repoName} lokal in meinem aktuellen Projekt.`}
+              />
+              <CodeBox
+                label="Lokal (Terminal)"
+                command={data.installation.local}
+                sublabel="nur für dieses Projekt"
+              />
+            </div>
           )}
           {data.installation.global && (
-            <CodeBox
-              label="Global"
-              command={data.installation.global}
-              sublabel="systemweit verfügbar"
-            />
+            <div className="space-y-2">
+              <ClaudeCommandBox
+                label="Claude-Befehl"
+                prompt={`Installiere ${data.repoName} global auf meinem System.`}
+              />
+              <CodeBox
+                label="Global (Terminal)"
+                command={data.installation.global}
+                sublabel="systemweit verfügbar"
+              />
+            </div>
           )}
           {data.installation.clone && (
-            <CodeBox
-              label="Repository klonen"
-              command={data.installation.clone}
-            />
+            <div className="space-y-2">
+              <ClaudeCommandBox
+                label="Claude-Befehl"
+                prompt={`Klone das Repository ${owner}/${repo} in den aktuellen Ordner und öffne es.`}
+              />
+              <CodeBox
+                label="Repository klonen (Terminal)"
+                command={data.installation.clone}
+              />
+            </div>
           )}
         </div>
       </section>
