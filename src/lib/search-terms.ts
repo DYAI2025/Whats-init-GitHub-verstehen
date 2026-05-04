@@ -66,12 +66,64 @@ function tokenize(input: string): string[] {
     .filter(Boolean);
 }
 
-function buildQueryVariants(tokens: string[]): string[] {
-  const variants = new Set(tokens);
+function addToSetMap(map: Map<string, Set<string>>, key: string, value: string): void {
+  const existing = map.get(key);
+  if (existing) {
+    existing.add(value);
+    return;
+  }
 
-  for (const token of tokens) {
-    for (const synonym of SYNONYMS[token] ?? []) {
-      variants.add(normalizeText(synonym));
+  map.set(key, new Set([value]));
+}
+
+function buildSynonymMaps(): {
+  direct: Map<string, Set<string>>;
+  tokenToTerms: Map<string, Set<string>>;
+} {
+  const direct = new Map<string, Set<string>>();
+  const tokenToTerms = new Map<string, Set<string>>();
+
+  for (const [key, values] of Object.entries(SYNONYMS)) {
+    const terms = new Set([normalizeText(key), ...values.map((value) => normalizeText(value))]);
+
+    for (const term of terms) {
+      for (const other of terms) {
+        if (other !== term) {
+          addToSetMap(direct, term, other);
+        }
+      }
+
+      for (const token of tokenize(term)) {
+        for (const relatedTerm of terms) {
+          addToSetMap(tokenToTerms, token, relatedTerm);
+        }
+      }
+    }
+  }
+
+  return { direct, tokenToTerms };
+}
+
+const SYNONYM_MAPS = buildSynonymMaps();
+
+function buildQueryVariants(normalizedQuery: string, tokens: string[]): string[] {
+  const variants = new Set([normalizedQuery, ...tokens]);
+  const queue = [...variants];
+  let queueIndex = 0;
+
+  while (queueIndex < queue.length) {
+    const candidate = queue[queueIndex++];
+    if (!candidate) continue;
+
+    const expansions = [
+      ...(SYNONYM_MAPS.direct.get(candidate) ?? []),
+      ...(SYNONYM_MAPS.tokenToTerms.get(candidate) ?? []),
+    ];
+
+    for (const expansion of expansions) {
+      if (variants.has(expansion)) continue;
+      variants.add(expansion);
+      queue.push(expansion);
     }
   }
 
@@ -83,7 +135,7 @@ export function searchTerms(query: string, limit = 6): SearchTerm[] {
   if (!normalizedQuery) return [];
 
   const queryTokens = tokenize(normalizedQuery);
-  const queryVariants = buildQueryVariants(queryTokens);
+  const queryVariants = buildQueryVariants(normalizedQuery, queryTokens);
 
   return SEARCH_TERMS
     .map((term) => {
