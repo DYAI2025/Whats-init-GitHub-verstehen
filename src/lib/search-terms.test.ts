@@ -12,6 +12,11 @@ describe("searchTerms", () => {
     expect(results.some((result) => result.url === "/wiki/agent")).toBe(true);
   });
 
+  it("expands phrase synonyms bidirectionally", () => {
+    const results = searchTerms("künstliche intelligenz");
+    expect(results.some((result) => result.url === "/wiki/agent")).toBe(true);
+  });
+
   it("supports prefix based typing", () => {
     const results = searchTerms("pack");
     expect(results.some((result) => result.url === "/wiki/npm")).toBe(true);
