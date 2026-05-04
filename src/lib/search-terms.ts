@@ -109,9 +109,10 @@ const SYNONYM_MAPS = buildSynonymMaps();
 function buildQueryVariants(normalizedQuery: string, tokens: string[]): string[] {
   const variants = new Set([normalizedQuery, ...tokens]);
   const queue = [...variants];
+  let queueIndex = 0;
 
-  while (queue.length > 0) {
-    const candidate = queue.shift();
+  while (queueIndex < queue.length) {
+    const candidate = queue[queueIndex++];
     if (!candidate) continue;
 
     const expansions = [
