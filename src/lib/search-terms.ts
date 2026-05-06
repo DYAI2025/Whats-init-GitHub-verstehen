@@ -106,8 +106,20 @@ function buildSynonymMaps(): {
 
 const SYNONYM_MAPS = buildSynonymMaps();
 
+function buildTokenPhrases(tokens: string[]): string[] {
+  const phrases: string[] = [];
+
+  for (let start = 0; start < tokens.length; start++) {
+    for (let end = start + 2; end <= tokens.length; end++) {
+      phrases.push(tokens.slice(start, end).join(" "));
+    }
+  }
+
+  return phrases;
+}
+
 function buildQueryVariants(normalizedQuery: string, tokens: string[]): string[] {
-  const variants = new Set([normalizedQuery, ...tokens]);
+  const variants = new Set([normalizedQuery, ...tokens, ...buildTokenPhrases(tokens)]);
   const queue = [...variants];
   let queueIndex = 0;
 
